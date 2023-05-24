@@ -1,6 +1,9 @@
+import './UserInfo.css'
+
+
 function UserInfo() {
     return (
-        <div>
+        <div className="user-info">
             id,
             followers,
             avatar_url

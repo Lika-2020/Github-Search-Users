@@ -1,11 +1,14 @@
-import SearchInput from "./components/SearchInput/SearchInput";
-import UserList from "./components/UserList/UserList";
+import SearchInput from './components/SearchInput/SearchInput';
+import UserList from './components/UserList/UserList';
+import './App.css';
 
 function App() {
   return (
     <div className="App">
-    <SearchInput/>
-    <UserList/>
+      <div className="container">
+        <SearchInput />
+        <UserList />
+      </div>
     </div>
   );
 }
