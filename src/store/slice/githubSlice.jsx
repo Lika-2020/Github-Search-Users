@@ -3,7 +3,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { searchUsers, getUserRepos } from '../../api/api';
 
-const githubSlice = createSlice({
+export const githubSlice = createSlice({
   name: 'github',
   initialState: {
     users: [],
@@ -12,6 +12,8 @@ const githubSlice = createSlice({
     error: null,
     filteredUsers: [],
     login: null,
+    currentPage: 1,
+    usersPerPage: 9,
   },
   reducers: {
     setUsers: (state, action) => {
@@ -19,6 +21,9 @@ const githubSlice = createSlice({
     },
     setLogin: (state, action) => {
       state.login = action.payload;
+      state.filteredUsers = state.users.filter((user) =>
+        user.login.includes(action.payload)
+      );
     },
     setFilteredUsers: (state, action) => {
       state.filteredUsers = action.payload;
@@ -35,31 +40,36 @@ const githubSlice = createSlice({
       );
       state.sort = 'descending';
     },
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
+    
   },
   extraReducers: (builder) => {
     builder
-    // eslint-disable-next-line no-unused-vars
-   
-   
-     
-   
-    // eslint-disable-next-line no-unused-vars
-   
-      .addCase(searchUsers.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(searchUsers.fulfilled, (state, action) => {
+    .addCase(searchUsers.pending, (state) => {
+      state.status = 'loading';
+    })
+    .addCase(searchUsers.fulfilled, (state, action) => {
+      if (Array.isArray(action.payload)) {
         state.status = 'succeeded';
         state.users = action.payload;
-      })
-      .addCase(searchUsers.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      })
-      // eslint-disable-next-line no-unused-vars
+        state.filteredUsers = action.payload.filter((user) =>
+          user.login.includes(state.login)
+        );
+      } else {
+        state.status = 'succeeded';
+        state.users = [];
+        state.filteredUsers = [];
+      }
+    })
+    .addCase(searchUsers.rejected, (state, action) => {
+      state.status = 'failed';
+      state.error = action.error.message;
+    })
+
       .addCase(getUserRepos.pending, (state) => {
         console.log('getUserRepos.pending');
-        // Дополнительные действия при начале запроса
       })
       .addCase(getUserRepos.fulfilled, (state, action) => {
         const { login, repos } = action.payload;
@@ -71,8 +81,7 @@ const githubSlice = createSlice({
       })
       .addCase(getUserRepos.rejected, (state, action) => {
         console.log('getUserRepos.rejected');
-        // Дополнительные действия при ошибке запроса
-      })
+      });
   },
 });
 
@@ -82,6 +91,13 @@ export const {
   setFilteredUsers,
   sortByAscending,
   sortByDescending,
+  setCurrentPage,
+ 
 } = githubSlice.actions;
+
+export const calculateTotalPages = (state) => {
+  const { usersPerPage, users } = state;
+  return Math.ceil(users.length / usersPerPage);
+};
 
 export default githubSlice.reducer;

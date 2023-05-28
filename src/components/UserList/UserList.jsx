@@ -4,19 +4,28 @@ import { useEffect } from 'react';
 import {
   sortByAscending,
   sortByDescending,
+  setCurrentPage,
+  calculateTotalPages,
 } from '../../store/slice/githubSlice';
 
 import { getUserRepos } from '../../api/api';
 
 function UserList() {
   const users = useSelector((state) => {
-    const sortedUsers = [...state.github.users]; // Создаем копию массива users
+    const { currentPage, usersPerPage } = state.github;
+    const startIndex = (currentPage - 1) * usersPerPage;
+    const endIndex = startIndex + usersPerPage;
+
+    const sortedUsers = [...state.github.users];
     if (state.github.sort === 'ascending') {
       sortedUsers.sort((a, b) => a.public_repos - b.public_repos);
     } else if (state.github.sort === 'descending') {
       sortedUsers.sort((a, b) => b.public_repos - a.public_repos);
     }
-    return sortedUsers;
+
+    const paginatedUsers = sortedUsers.slice(startIndex, endIndex);
+
+    return paginatedUsers;
   });
 
   const dispatch = useDispatch();
@@ -27,6 +36,9 @@ function UserList() {
     });
   }, [dispatch, users]);
 
+  const currentPage = useSelector((state) => state.github.currentPage);
+  const totalPages = useSelector((state) => calculateTotalPages(state.github));
+
   const handleSortAscending = () => {
     dispatch(sortByAscending());
   };
@@ -35,12 +47,19 @@ function UserList() {
     dispatch(sortByDescending());
   };
 
+  const handlePageChange = (page) => {
+    dispatch(setCurrentPage(page));
+  };
+
+  const getButtonClass = (page) =>
+    page === currentPage ? 'active your-class-name' : 'your-class-name';
+
   return (
     <div className="ul">
-      <button type="button" onClick={handleSortAscending}>
+      <button className='button' type="button" onClick={handleSortAscending}>
         Sort Ascending
       </button>
-      <button type="button" onClick={handleSortDescending}>
+      <button className='button' type="button" onClick={handleSortDescending}>
         Sort Descending
       </button>
       <ul>
@@ -70,6 +89,20 @@ function UserList() {
           ))}
         </div>
       </ul>
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+          (page) => (
+            <button
+              type="submit"
+              key={page}
+              onClick={() => handlePageChange(page)}
+              className={getButtonClass(page)}
+            >
+              {page}
+            </button>
+          )
+        )}
+      </div>
     </div>
   );
 }

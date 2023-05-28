@@ -9,6 +9,9 @@ function SearchInput() {
   const handleInputChange = async (event) => {
     const { value } = event.target;
     dispatch(setLogin(value));
+  
+
+
 
     try {
       const response = await dispatch(searchUsers(value));
