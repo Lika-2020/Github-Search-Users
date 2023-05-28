@@ -1,0 +1,25 @@
+img {
+    width: 300px;
+}
+
+span {
+    color: white;
+}
+
+
+
+ul {
+    list-style-type: none;
+   }
+
+.user-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+     gap: 40px;;
+}
+
+.ul {
+    display: grid;
+    justify-content: center;
+    margin-top: 50px;
+}
