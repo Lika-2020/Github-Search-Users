@@ -2,13 +2,22 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const searchUsers = createAsyncThunk(
   'github/searchUsers',
+
   async (login) => {
     if (login === '') {
       return []; // Возвращаем пустой массив, если поле поиска пустое
     }
 
+    const token = process.env.REACT_APP_GITHUB_TOKEN;
+
     const response = await fetch(
-      `https://api.github.com/search/users?q=${login}`
+      `https://api.github.com/search/users?q=${login}`,
+
+      {
+        headers: {
+          Authorization: `token ${token}`,
+        },
+      }
     );
 
     const data = await response.json();
@@ -22,8 +31,14 @@ export const searchUsers = createAsyncThunk(
 
 export const getUserRepos = createAsyncThunk(
   'repos/getUserRepos',
+
   async (login) => {
-    const response = await fetch(`https://api.github.com/users/${login}`);
+    const token = process.env.REACT_APP_GITHUB_TOKEN;
+    const response = await fetch(`https://api.github.com/users/${login}`, {
+      headers: {
+        Authorization: `token ${token}`,
+      },
+    });
 
     const data = await response.json();
     const repos = data.public_repos;

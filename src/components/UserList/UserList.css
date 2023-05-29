@@ -42,12 +42,23 @@ ul {
   color: #fff;
 }
 
-.button {
+.active {
+  color: black;
+  background-color: #fff;
+}
+
+.button-sort {
   height: 48px;
   border: 2px solid white;
   color: #fff;
   text-align: center;
-
+  margin-left: 20px;
   padding: 16px;
   background-color: #333;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 100px;
 }

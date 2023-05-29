@@ -1,6 +1,6 @@
 import './UserList.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   sortByAscending,
   sortByDescending,
@@ -11,6 +11,8 @@ import {
 import { getUserRepos } from '../../api/api';
 
 function UserList() {
+  const [expandedUser, setExpandedUser] = useState(null);
+
   const users = useSelector((state) => {
     const { currentPage, usersPerPage } = state.github;
     const startIndex = (currentPage - 1) * usersPerPage;
@@ -54,36 +56,61 @@ function UserList() {
   const getButtonClass = (page) =>
     page === currentPage ? 'active your-class-name' : 'your-class-name';
 
+  const toggleUserDetails = (userId) => {
+    if (expandedUser === userId) {
+      setExpandedUser(null);
+    } else {
+      setExpandedUser(userId);
+    }
+  };
+
   return (
     <div className="ul">
-      <button className='button' type="button" onClick={handleSortAscending}>
-        Sort Ascending
-      </button>
-      <button className='button' type="button" onClick={handleSortDescending}>
-        Sort Descending
-      </button>
+      <div className="button">
+        <button
+          className="button-sort"
+          type="button"
+          onClick={handleSortAscending}
+        >
+          Sort Ascending
+        </button>
+        <button
+          className="button-sort"
+          type="button"
+          onClick={handleSortDescending}
+        >
+          Sort Descending
+        </button>
+      </div>
       <ul>
         <div className="user-list">
           {users.map((user) => (
             <li key={user.id}>
               <div className="list">
-                <div>
+                <div
+                  role="presentation"
+                  onClick={() => toggleUserDetails(user.id)}
+                >
                   {user.avatar_url && (
                     <img src={user.avatar_url} alt={user.login} />
                   )}
                 </div>
-                <div>
-                  <span>Логин: </span>
-                  <span>{user.login}</span>
-                </div>
-                <div>
-                  <span>Id: </span>
-                  <span>{user.id}</span>
-                </div>
-                <div>
-                  <span>Кол-во репозиториев: </span>
-                  <span>{user.public_repos}</span>
-                </div>
+                {expandedUser === user.id && (
+                  <div>
+                    <div>
+                      <span>Логин: </span>
+                      <span>{user.login}</span>
+                    </div>
+                    <div>
+                      <span>Id: </span>
+                      <span>{user.id}</span>
+                    </div>
+                    <div>
+                      <span>Кол-во репозиториев: </span>
+                      <span>{user.public_repos}</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </li>
           ))}

@@ -21,12 +21,17 @@ export const githubSlice = createSlice({
     },
     setLogin: (state, action) => {
       state.login = action.payload;
+      if (action.payload === '') {
+        state.login = null; // Очистка login при пустом значении
+      }
       state.filteredUsers = state.users.filter((user) =>
         user.login.includes(action.payload)
       );
     },
     setFilteredUsers: (state, action) => {
+      console.log('Before filtering:', action.payload);
       state.filteredUsers = action.payload;
+      console.log('After filtering:', state.filteredUsers);
     },
     sortByAscending: (state) => {
       state.users = [...state.users].sort(
@@ -43,30 +48,29 @@ export const githubSlice = createSlice({
     setCurrentPage: (state, action) => {
       state.currentPage = action.payload;
     },
-    
   },
   extraReducers: (builder) => {
     builder
-    .addCase(searchUsers.pending, (state) => {
-      state.status = 'loading';
-    })
-    .addCase(searchUsers.fulfilled, (state, action) => {
-      if (Array.isArray(action.payload)) {
-        state.status = 'succeeded';
-        state.users = action.payload;
-        state.filteredUsers = action.payload.filter((user) =>
-          user.login.includes(state.login)
-        );
-      } else {
-        state.status = 'succeeded';
-        state.users = [];
-        state.filteredUsers = [];
-      }
-    })
-    .addCase(searchUsers.rejected, (state, action) => {
-      state.status = 'failed';
-      state.error = action.error.message;
-    })
+      .addCase(searchUsers.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(searchUsers.fulfilled, (state, action) => {
+        if (Array.isArray(action.payload)) {
+          state.status = 'succeeded';
+          state.users = action.payload;
+          state.filteredUsers = action.payload.filter((user) =>
+            user.login.includes(state.login)
+          );
+        } else {
+          state.status = 'succeeded';
+          state.users = [];
+          state.filteredUsers = [];
+        }
+      })
+      .addCase(searchUsers.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
 
       .addCase(getUserRepos.pending, (state) => {
         console.log('getUserRepos.pending');
@@ -92,7 +96,6 @@ export const {
   sortByAscending,
   sortByDescending,
   setCurrentPage,
- 
 } = githubSlice.actions;
 
 export const calculateTotalPages = (state) => {
