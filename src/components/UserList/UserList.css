@@ -10,6 +10,11 @@ ul {
   list-style-type: none;
 }
 
+a {
+  color: gainsboro;
+  text-decoration: none;
+}
+
 .user-list {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

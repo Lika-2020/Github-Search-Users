@@ -16,6 +16,7 @@ describe('SearchInput', () => {
     store = mockStore({});
   });
   
+  
 
   test('Отправляет действие setLogin при изменении ввода', () => {
 

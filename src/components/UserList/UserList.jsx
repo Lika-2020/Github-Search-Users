@@ -120,6 +120,7 @@ function UserList() {
                 </div>
                 {expandedUser === user.id && (
                   <div>
+                    
                     <div>
                       <span>Логин: </span>
                       <span>{user.login}</span>
@@ -130,6 +131,17 @@ function UserList() {
                       </span>
                       <span>{user.id}</span>
                     </div>
+
+                    <div>
+                      <a
+                        href={`https://github.com/${user.login}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Профиль GitHub
+                      </a>
+                    </div>
+
                     <div>
                       <span role="cell" aria-label="Repository Count">
                         Кол-во репозиториев:
