@@ -7,6 +7,7 @@ const setErrorLocalization = (err) => {
   }
 
   return err.message;
+  
 };
 
 export default setErrorLocalization;

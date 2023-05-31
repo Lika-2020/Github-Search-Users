@@ -18,6 +18,7 @@ function SearchInput() {
   const dispatch = useDispatch();
 
   let searchTimeout;
+  
 
   const handleInputChange = (event) => {
     const { value } = event.target;

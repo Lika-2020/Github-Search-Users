@@ -5,4 +5,5 @@ function GlobalStylesWrapper({ children }) {
   return <div className={styles.global}>{children}</div>;
 }
 
+
 export default GlobalStylesWrapper;

@@ -5,6 +5,7 @@ import App from './App';
 import GlobalStylesWrapper from './GlobalStylesWrapper';
 import store from './store/store';
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>

@@ -15,6 +15,7 @@ jest.mock('react-redux', () => ({
   useDispatch: jest.fn(),
 }));
 
+
 test('Pаскрывает информацию о пользователе при нажатии на avatar_url', () => {
   const users = [
     {

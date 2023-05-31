@@ -16,6 +16,7 @@ const githubSlice = createSlice({
     currentPage: 1,
     usersPerPage: 9,
   },
+  
   reducers: {
     setUsers: (state, action) => {
       state.users = action.payload;

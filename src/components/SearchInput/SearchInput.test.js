@@ -15,9 +15,10 @@ describe('SearchInput', () => {
   beforeEach(() => {
     store = mockStore({});
   });
+  
 
   test('Отправляет действие setLogin при изменении ввода', () => {
-    
+
     const { getByPlaceholderText } = render(
       <Provider store={store}>
         <SearchInput />

@@ -6,6 +6,7 @@ export const searchUsers = createAsyncThunk(
 
   async (login) => {
     if (login === '') {
+      
       return []; // Возвращаем пустой массив, если поле поиска пустое
     }
 
