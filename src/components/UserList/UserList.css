@@ -1,0 +1,80 @@
+img {
+  width: 300px;
+}
+
+span {
+  color: white;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.user-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+
+.ul {
+  display: grid;
+  justify-content: center;
+  margin-top: 50px;
+  gap: 10px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 100px;
+  gap: 5px;
+}
+
+.your-class-name {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  text-align: center;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 2px #fff;
+  border-radius: 2px;
+  background-color: #282c34;
+  color: #fff;
+}
+
+.active {
+  color: black;
+  background-color: #fff;
+}
+
+.button-sort {
+  height: 48px;
+  border: 2px solid white;
+  color: #fff;
+  text-align: center;
+  margin-left: 20px;
+  padding: 16px;
+  background-color: #282c34;
+  cursor: pointer;
+}
+
+.active-sort {
+  color: black;
+  background-color: #fff;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 100px;
+}
+
+.title-users-search {
+  color: white;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+
+

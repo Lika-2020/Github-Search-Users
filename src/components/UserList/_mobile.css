@@ -1,0 +1,16 @@
+@media (max-width: 767px) {
+  .user-list {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    align-items: center;
+    gap: 40px;
+  }
+
+  .ul {
+    display: grid;
+   
+    margin-top: 50px;
+    gap: 10px;
+  }
+  
+}
