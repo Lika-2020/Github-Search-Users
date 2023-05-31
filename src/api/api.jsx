@@ -11,7 +11,7 @@ export const searchUsers = createAsyncThunk(
     const token = process.env.REACT_APP_GITHUB_TOKEN;
 
     const response = await fetch(
-      `https://api.github.com/search/users?q=${login}`,
+      `https://api.github.com/search/users?q=${login}&per_page=100`,
 
       {
         headers: {
@@ -22,9 +22,9 @@ export const searchUsers = createAsyncThunk(
 
     const data = await response.json();
     const filteredUsers = data.items.filter((user) =>
-      user.login.includes(login)
+      user.login.startsWith(login)
     );
-    console.log(filteredUsers);
+
     return filteredUsers;
   }
 );
@@ -42,7 +42,7 @@ export const getUserRepos = createAsyncThunk(
 
     const data = await response.json();
     const repos = data.public_repos;
-    console.log(repos);
+    
     return { login, repos }; // Возвращаем объект с данными о логине и количестве репозиториев
   }
 );

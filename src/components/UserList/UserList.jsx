@@ -12,7 +12,11 @@ import { getUserRepos } from '../../api/api';
 
 function UserList() {
   const [expandedUser, setExpandedUser] = useState(null);
+  const [activeSort, setActiveSort] = useState(null);
 
+  const isSearching = useSelector((state) => state.github.isSearching);
+  const dispatch = useDispatch();
+  
   const users = useSelector((state) => {
     const { currentPage, usersPerPage } = state.github;
     const startIndex = (currentPage - 1) * usersPerPage;
@@ -20,17 +24,18 @@ function UserList() {
 
     const sortedUsers = [...state.github.users];
     if (state.github.sort === 'ascending') {
-      sortedUsers.sort((a, b) => a.public_repos - b.public_repos);
+      dispatch(sortByAscending());
     } else if (state.github.sort === 'descending') {
-      sortedUsers.sort((a, b) => b.public_repos - a.public_repos);
+      dispatch(sortByDescending());
     }
+    
 
     const paginatedUsers = sortedUsers.slice(startIndex, endIndex);
 
     return paginatedUsers;
   });
 
-  const dispatch = useDispatch();
+
 
   useEffect(() => {
     users.forEach((user) => {
@@ -40,13 +45,16 @@ function UserList() {
 
   const currentPage = useSelector((state) => state.github.currentPage);
   const totalPages = useSelector((state) => calculateTotalPages(state.github));
+  const totalUsers = useSelector((state) => state.github.users.length);
 
   const handleSortAscending = () => {
     dispatch(sortByAscending());
+    setActiveSort('ascending');
   };
 
   const handleSortDescending = () => {
     dispatch(sortByDescending());
+    setActiveSort('descending');
   };
 
   const handlePageChange = (page) => {
@@ -55,6 +63,10 @@ function UserList() {
 
   const getButtonClass = (page) =>
     page === currentPage ? 'active your-class-name' : 'your-class-name';
+
+    const getButtonSortClass = (sortType) =>
+  activeSort === sortType ? 'active-sort button-sort' : 'button-sort';
+
 
   const toggleUserDetails = (userId) => {
     if (expandedUser === userId) {
@@ -66,22 +78,35 @@ function UserList() {
 
   return (
     <div className="ul">
-      <div className="button">
-        <button
-          className="button-sort"
-          type="button"
-          onClick={handleSortAscending}
-        >
-          Sort Ascending
-        </button>
-        <button
-          className="button-sort"
-          type="button"
-          onClick={handleSortDescending}
-        >
-          Sort Descending
-        </button>
-      </div>
+      {isSearching && totalUsers === 0 && (
+        <div className="title-users-search">Пользователь не найден</div>
+      )}
+
+      {totalUsers > 0 && (
+        <div className="button">
+          <button
+            className={getButtonSortClass('ascending')}
+            type="button"
+            onClick={handleSortAscending}
+          >
+            Sort Ascending
+          </button>
+          <button
+            className={getButtonSortClass('descending')}
+            type="button"
+            onClick={handleSortDescending}
+          >
+            Sort Descending
+          </button>
+        </div>
+      )}
+
+      {totalUsers > 0 && (
+        <div className="title-users-search">
+          Найдено {totalUsers} пользователей
+        </div>
+      )}
+
       <ul>
         <div className="user-list">
           {users.map((user) => (
@@ -102,11 +127,11 @@ function UserList() {
                       <span>{user.login}</span>
                     </div>
                     <div>
-                      <span>Id: </span>
+                      <span role="cell" aria-label="User ID">Id: </span>
                       <span>{user.id}</span>
                     </div>
                     <div>
-                      <span>Кол-во репозиториев: </span>
+                      <span role="cell" aria-label="Repository Count">Кол-во репозиториев: </span>
                       <span>{user.public_repos}</span>
                     </div>
                   </div>

@@ -1,10 +1,18 @@
 import './style.css';
 import { useDispatch } from 'react-redux';
-
+import { useState } from 'react';
 import { searchUsers } from '../../api/api';
-import { setLogin, setFilteredUsers } from '../../store/slice/githubSlice';
+import {
+  setLogin,
+  setFilteredUsers,
+  setIsSearching,
+} from '../../store/slice/githubSlice';
+import ErrorMessage from '../Error/ErrorMessage'; 
+import setErrorLocalization from '../Error/ErrorLocalization'; 
 
 function SearchInput() {
+  const [localizedError, setLocalizedError] = useState(null);
+
   const dispatch = useDispatch();
 
   let searchTimeout;
@@ -13,23 +21,36 @@ function SearchInput() {
     const { value } = event.target;
     dispatch(setLogin(value));
 
-    clearTimeout(searchTimeout); // Clear the previous timeout
+    clearTimeout(searchTimeout); 
+
+    if (value.trim() === '') {
+      dispatch(setFilteredUsers([])); 
+    }
+
+    dispatch(setIsSearching(true)); 
 
     searchTimeout = setTimeout(async () => {
       try {
         const response = await dispatch(searchUsers(value));
         const filteredUsers = response.payload.filter((user) =>
-          user.login.includes(value)
+          user.login.startsWith(value)
         );
+
         dispatch(setFilteredUsers(filteredUsers));
-      } catch (error) {
-        console.log('Error:', error);
+
+        if (filteredUsers.length === 0) {
+          dispatch(setIsSearching(false)); 
+        }
+      } catch (err) {
+        
+        const errorMessage = setErrorLocalization(err); // Функция setErrorLocalization локализует ошибку на русский язык
+        setLocalizedError(errorMessage);
       }
     }, 300);
   };
 
   return (
-    <div className="search-input">
+    <div id="search-input" className="search-input">
       <div className="title">
         <h1>Github Search Users</h1>
       </div>
@@ -42,6 +63,9 @@ function SearchInput() {
           placeholder="Введите логин пользователя"
           onChange={handleInputChange}
         />
+        {localizedError && (
+          <ErrorMessage message={localizedError} /> 
+        )}
       </div>
     </div>
   );

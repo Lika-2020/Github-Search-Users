@@ -3,7 +3,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { searchUsers, getUserRepos } from '../../api/api';
 
-export const githubSlice = createSlice({
+const githubSlice = createSlice({
   name: 'github',
   initialState: {
     users: [],
@@ -11,6 +11,7 @@ export const githubSlice = createSlice({
     sort: null,
     error: null,
     filteredUsers: [],
+    isSearching: false,
     login: null,
     currentPage: 1,
     usersPerPage: 9,
@@ -24,15 +25,17 @@ export const githubSlice = createSlice({
       if (action.payload === '') {
         state.login = null; // Очистка login при пустом значении
       }
-      state.filteredUsers = state.users.filter((user) =>
-        user.login.includes(action.payload)
+      state.filteredUsers = state.users.filter(
+        (user) => user.login === action.payload
       );
     },
     setFilteredUsers: (state, action) => {
-      console.log('Before filtering:', action.payload);
       state.filteredUsers = action.payload;
-      console.log('After filtering:', state.filteredUsers);
     },
+    setIsSearching: (state, action) => {
+      state.isSearching = action.payload;
+    },
+
     sortByAscending: (state) => {
       state.users = [...state.users].sort(
         (a, b) => a.public_repos - b.public_repos
@@ -52,14 +55,14 @@ export const githubSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(searchUsers.pending, (state) => {
-        state.status = 'loading';
+        state.status = 'succeeded';
       })
       .addCase(searchUsers.fulfilled, (state, action) => {
         if (Array.isArray(action.payload)) {
           state.status = 'succeeded';
           state.users = action.payload;
           state.filteredUsers = action.payload.filter((user) =>
-            user.login.includes(state.login)
+            user.login.startsWith(state.login)
           );
         } else {
           state.status = 'succeeded';
@@ -73,18 +76,17 @@ export const githubSlice = createSlice({
       })
 
       .addCase(getUserRepos.pending, (state) => {
-        console.log('getUserRepos.pending');
+        state.error = null;
       })
       .addCase(getUserRepos.fulfilled, (state, action) => {
         const { login, repos } = action.payload;
-        console.log('getUserRepos.fulfilled');
         const user = state.users.find((users) => users.login === login);
         if (user) {
           user.public_repos = repos;
         }
       })
       .addCase(getUserRepos.rejected, (state, action) => {
-        console.log('getUserRepos.rejected');
+        state.error = action.error.message;
       });
   },
 });
@@ -96,6 +98,8 @@ export const {
   sortByAscending,
   sortByDescending,
   setCurrentPage,
+  setIsSearching,
+  startLoading,
 } = githubSlice.actions;
 
 export const calculateTotalPages = (state) => {
