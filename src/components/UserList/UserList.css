@@ -42,7 +42,6 @@ ul {
   color: #fff;
 }
 
-
 .active {
   color: black;
   background-color: #fff;
@@ -55,7 +54,7 @@ ul {
   text-align: center;
   margin-left: 20px;
   padding: 16px;
-  background-color:#282c34;
+  background-color: #282c34;
   cursor: pointer;
 }
 
@@ -68,7 +67,6 @@ ul {
   display: flex;
   justify-content: center;
   margin-bottom: 100px;
-
 }
 
 .title-users-search {
@@ -77,3 +75,5 @@ ul {
   justify-content: center;
   margin-bottom: 50px;
 }
+
+

@@ -1,4 +1,6 @@
 import './style.css';
+import './_mobile.css'
+
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
 import { searchUsers } from '../../api/api';

@@ -1,3 +1,4 @@
+
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const searchUsers = createAsyncThunk(
@@ -29,11 +30,12 @@ export const searchUsers = createAsyncThunk(
   }
 );
 
-export const getUserRepos = createAsyncThunk(
+ export const getUserRepos = createAsyncThunk(
   'repos/getUserRepos',
 
   async (login) => {
     const token = process.env.REACT_APP_GITHUB_TOKEN;
+
     const response = await fetch(`https://api.github.com/users/${login}`, {
       headers: {
         Authorization: `token ${token}`,
@@ -45,4 +47,4 @@ export const getUserRepos = createAsyncThunk(
     
     return { login, repos }; // Возвращаем объект с данными о логине и количестве репозиториев
   }
-);
+); 

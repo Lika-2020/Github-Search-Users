@@ -17,6 +17,7 @@ describe('SearchInput', () => {
   });
 
   test('Отправляет действие setLogin при изменении ввода', () => {
+    
     const { getByPlaceholderText } = render(
       <Provider store={store}>
         <SearchInput />

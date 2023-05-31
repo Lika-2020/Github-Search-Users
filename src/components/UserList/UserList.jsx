@@ -1,4 +1,6 @@
 import './UserList.css';
+import './_tablet.css';
+import './_mobile.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import {
@@ -16,7 +18,7 @@ function UserList() {
 
   const isSearching = useSelector((state) => state.github.isSearching);
   const dispatch = useDispatch();
-  
+
   const users = useSelector((state) => {
     const { currentPage, usersPerPage } = state.github;
     const startIndex = (currentPage - 1) * usersPerPage;
@@ -24,18 +26,15 @@ function UserList() {
 
     const sortedUsers = [...state.github.users];
     if (state.github.sort === 'ascending') {
-      dispatch(sortByAscending());
+      sortByAscending();
     } else if (state.github.sort === 'descending') {
-      dispatch(sortByDescending());
+      sortByDescending();
     }
-    
 
     const paginatedUsers = sortedUsers.slice(startIndex, endIndex);
 
     return paginatedUsers;
   });
-
-
 
   useEffect(() => {
     users.forEach((user) => {
@@ -64,9 +63,8 @@ function UserList() {
   const getButtonClass = (page) =>
     page === currentPage ? 'active your-class-name' : 'your-class-name';
 
-    const getButtonSortClass = (sortType) =>
-  activeSort === sortType ? 'active-sort button-sort' : 'button-sort';
-
+  const getButtonSortClass = (sortType) =>
+    activeSort === sortType ? 'active-sort button-sort' : 'button-sort';
 
   const toggleUserDetails = (userId) => {
     if (expandedUser === userId) {
@@ -127,11 +125,15 @@ function UserList() {
                       <span>{user.login}</span>
                     </div>
                     <div>
-                      <span role="cell" aria-label="User ID">Id: </span>
+                      <span role="cell" aria-label="User ID">
+                        Id:
+                      </span>
                       <span>{user.id}</span>
                     </div>
                     <div>
-                      <span role="cell" aria-label="Repository Count">Кол-во репозиториев: </span>
+                      <span role="cell" aria-label="Repository Count">
+                        Кол-во репозиториев:
+                      </span>
                       <span>{user.public_repos}</span>
                     </div>
                   </div>
