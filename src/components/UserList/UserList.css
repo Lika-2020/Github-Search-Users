@@ -34,9 +34,10 @@ a {
   justify-content: center;
   margin-top: 100px;
   gap: 5px;
+ 
 }
 
-.your-class-name {
+.pagination-button {
   position: relative;
   width: 48px;
   height: 48px;
@@ -46,11 +47,7 @@ a {
   border-radius: 2px;
   background-color: #282c34;
   color: #fff;
-}
-
-.active {
-  color: black;
-  background-color: #fff;
+  cursor: pointer;
 }
 
 .button-sort {
@@ -64,10 +61,12 @@ a {
   cursor: pointer;
 }
 
-.active-sort {
+.active {
   color: black;
   background-color: #fff;
 }
+
+
 
 .button {
   display: flex;

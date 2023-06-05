@@ -4,13 +4,12 @@ import './_mobile.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import {
-  sortByAscending,
-  sortByDescending,
   setCurrentPage,
   calculateTotalPages,
+  setSortType,
 } from '../../store/slice/githubSlice';
 
-import { getUserRepos } from '../../api/api';
+import { getUserRepos, sortUsers } from '../../api/api';
 
 function UserList() {
   const [expandedUser, setExpandedUser] = useState(null);
@@ -19,21 +18,18 @@ function UserList() {
   const isSearching = useSelector((state) => state.github.isSearching);
   const dispatch = useDispatch();
 
+  const currentPage = useSelector((state) => state.github.currentPage);
+  const totalPages = useSelector((state) => calculateTotalPages(state.github));
+  const totalUsers = useSelector((state) => state.github.users.length);
+  const login = useSelector((state) => state.github.login);
   const users = useSelector((state) => {
-    const { currentPage, usersPerPage } = state.github;
+    const { usersPerPage } = state.github;
     const startIndex = (currentPage - 1) * usersPerPage;
     const endIndex = startIndex + usersPerPage;
 
     const sortedUsers = [...state.github.users];
-    if (state.github.sort === 'ascending') {
-      sortByAscending();
-    } else if (state.github.sort === 'descending') {
-      sortByDescending();
-    }
 
-    const paginatedUsers = sortedUsers.slice(startIndex, endIndex);
-
-    return paginatedUsers;
+    return sortedUsers.slice(startIndex, endIndex);
   });
 
   useEffect(() => {
@@ -42,18 +38,13 @@ function UserList() {
     });
   }, [dispatch, users]);
 
-  const currentPage = useSelector((state) => state.github.currentPage);
-  const totalPages = useSelector((state) => calculateTotalPages(state.github));
-  const totalUsers = useSelector((state) => state.github.users.length);
+  // Эти действия обновляют состояние сортировки пользователей и выполняют сортировку.
+  // Активная сортировка сохраняется в состоянии activeSort.
 
-  const handleSortAscending = () => {
-    dispatch(sortByAscending());
-    setActiveSort('ascending');
-  };
-
-  const handleSortDescending = () => {
-    dispatch(sortByDescending());
-    setActiveSort('descending');
+  const handleSort = ({ field, order }) => {
+    dispatch(setSortType(field, order));
+    dispatch(sortUsers({ login, order, currentPage }));
+    setActiveSort({ order });
   };
 
   const handlePageChange = (page) => {
@@ -61,10 +52,12 @@ function UserList() {
   };
 
   const getButtonClass = (page) =>
-    page === currentPage ? 'active your-class-name' : 'your-class-name';
+    page === currentPage ? 'active pagination-button' : 'pagination-button';
 
-  const getButtonSortClass = (sortType) =>
-    activeSort === sortType ? 'active-sort button-sort' : 'button-sort';
+  const getButtonSortClass = (order) =>
+    activeSort && activeSort.order === order
+      ? 'active button-sort'
+      : 'button-sort';
 
   const toggleUserDetails = (userId) => {
     if (expandedUser === userId) {
@@ -83,16 +76,16 @@ function UserList() {
       {totalUsers > 0 && (
         <div className="button">
           <button
-            className={getButtonSortClass('ascending')}
+            className={getButtonSortClass('asc')}
             type="button"
-            onClick={handleSortAscending}
+            onClick={() => handleSort({ field: 'repos', order: 'asc' })}
           >
             Sort Ascending
           </button>
           <button
-            className={getButtonSortClass('descending')}
+            className={getButtonSortClass('desc')}
             type="button"
-            onClick={handleSortDescending}
+            onClick={() => handleSort({ field: 'repos', order: 'desc' })}
           >
             Sort Descending
           </button>
@@ -120,7 +113,6 @@ function UserList() {
                 </div>
                 {expandedUser === user.id && (
                   <div>
-                    
                     <div>
                       <span>Логин: </span>
                       <span>{user.login}</span>
@@ -172,6 +164,5 @@ function UserList() {
     </div>
   );
 }
-
 
 export default UserList;

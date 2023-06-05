@@ -7,7 +7,7 @@ function App() {
     <div className="App center">
       <div className="container">
         <SearchInput />
-        <UserList />
+        <UserList/>
       </div>
     </div>
   );

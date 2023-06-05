@@ -1,5 +1,5 @@
 import './style.css';
-import './_mobile.css'
+import './_mobile.css';
 
 import { useDispatch } from 'react-redux';
 import { useState } from 'react';
@@ -9,8 +9,8 @@ import {
   setFilteredUsers,
   setIsSearching,
 } from '../../store/slice/githubSlice';
-import ErrorMessage from '../Error/ErrorMessage'; 
-import setErrorLocalization from '../Error/ErrorLocalization'; 
+import ErrorMessage from '../Error/ErrorMessage';
+import setErrorLocalization from '../Error/ErrorLocalization';
 
 function SearchInput() {
   const [localizedError, setLocalizedError] = useState(null);
@@ -18,34 +18,33 @@ function SearchInput() {
   const dispatch = useDispatch();
 
   let searchTimeout;
-  
 
   const handleInputChange = (event) => {
     const { value } = event.target;
     dispatch(setLogin(value));
 
-    clearTimeout(searchTimeout); 
+    clearTimeout(searchTimeout);
 
     if (value.trim() === '') {
-      dispatch(setFilteredUsers([])); 
+      dispatch(setFilteredUsers([]));
     }
 
-    dispatch(setIsSearching(true)); 
+    dispatch(setIsSearching(true));
 
     searchTimeout = setTimeout(async () => {
       try {
-        const response = await dispatch(searchUsers(value));
-        const filteredUsers = response.payload.filter((user) =>
-          user.login.startsWith(value)
+        const response = await dispatch(searchUsers(value)); // Внутри асинхронной функции выполняется запрос searchUsers с помощью dispatch и сохраняется ответ в переменную response.
+        const filteredUsers = response.payload.filter(
+          // Фильтруются пользователи из response.payload, чтобы найти тех, чей логин содержит значение value.
+          (user) => user.login.includes(value)
         );
 
         dispatch(setFilteredUsers(filteredUsers));
 
         if (filteredUsers.length === 0) {
-          dispatch(setIsSearching(false)); 
+          dispatch(setIsSearching(false));
         }
       } catch (err) {
-        
         const errorMessage = setErrorLocalization(err); // Функция setErrorLocalization локализует ошибку на русский язык
         setLocalizedError(errorMessage);
       }
@@ -66,9 +65,7 @@ function SearchInput() {
           placeholder="Введите логин пользователя"
           onChange={handleInputChange}
         />
-        {localizedError && (
-          <ErrorMessage message={localizedError} /> 
-        )}
+        {localizedError && <ErrorMessage message={localizedError} />}
       </div>
     </div>
   );
